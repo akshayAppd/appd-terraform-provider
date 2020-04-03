@@ -1,23 +1,23 @@
 provider appd {
 	protocol = "https"
-	host = "ces-controller.saas.appdynamics.com"
+	host = "<controller-url>"
 	port = "443"
-	user = "akshays"
-	password = "akshays"
-	account = "ces-controller"
+	user = ""
+	password = ""
+	account = ""
 }
 
 
 resource appd_machineagent "ma-maac" {
-	path = "/Users/akshasri/go/MA/"
-	account_access_key = "0cff2ab5-3532-4e63-ab1a-7f02294c9f56"
+	path = "<Path to MA>"
+	account_access_key = ""
 	sim_enabled = "true"
 	ssl_enabled = "true"
 }
 
 
 resource "appd_healthrule" "hr-maac" {
-	application_id = 612
+	application_id = <application-id>
 }
 
 output "HR_details" {
