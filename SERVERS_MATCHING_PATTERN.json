@@ -1,0 +1,72 @@
+{
+    "id": 4060,
+    "name": "HR_MaaC_Test",
+    "enabled": true,
+    "useDataFromLastNMinutes": 5,
+    "waitTimeAfterViolation": 1,
+    "scheduleName": "Always",
+    "affects": {
+        "affectedEntityType": "SERVERS",
+        "serverSelectionCriteria": {
+            "selectServersBy": "AFFECTED_SERVERS",
+            "affectedServers": {
+                "severSelectionScope": "SERVERS_MATCHING_PATTERN",
+                "patternMatcher": {
+                    "matchTo": "MATCH_REG_EX",
+                    "matchValue": "root*",
+                    "shouldNot": false
+                }
+            }
+        }
+    },
+    "evalCriterias": {
+        "criticalCriteria": {
+            "conditionAggregationType": "ALL",
+            "conditionExpression": null,
+            "conditions": [
+                {
+                    "name": "Condition 1",
+                    "shortName": "A",
+                    "evaluateToTrueOnNoData": false,
+                    "evalDetail": {
+                        "evalDetailType": "SINGLE_METRIC",
+                        "metricAggregateFunction": "VALUE",
+                        "metricPath": "Hardware Resources|CPU|%Busy",
+                        "metricEvalDetail": {
+                            "metricEvalDetailType": "SPECIFIC_TYPE",
+                            "compareCondition": "GREATER_THAN_SPECIFIC_VALUE",
+                            "compareValue": 10
+                        }
+                    },
+                    "triggerEnabled": true,
+                    "minimumTriggers": 2
+                }
+            ],
+            "evalMatchingCriteria": null
+        },
+        "warningCriteria": {
+            "conditionAggregationType": "ALL",
+            "conditionExpression": null,
+            "conditions": [
+                {
+                    "name": "Condition 1",
+                    "shortName": "A",
+                    "evaluateToTrueOnNoData": false,
+                    "evalDetail": {
+                        "evalDetailType": "SINGLE_METRIC",
+                        "metricAggregateFunction": "VALUE",
+                        "metricPath": "Hardware Resources|CPU|%Busy",
+                        "metricEvalDetail": {
+                            "metricEvalDetailType": "SPECIFIC_TYPE",
+                            "compareCondition": "GREATER_THAN_SPECIFIC_VALUE",
+                            "compareValue": 5
+                        }
+                    },
+                    "triggerEnabled": true,
+                    "minimumTriggers": 2
+                }
+            ],
+            "evalMatchingCriteria": null
+        }
+    }
+}
