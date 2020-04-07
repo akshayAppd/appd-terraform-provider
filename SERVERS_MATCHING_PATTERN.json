@@ -1,6 +1,6 @@
 {
     "id": 4060,
-    "name": "HR_MaaC_Test",
+    "name": "MaaC_Test High CPU Usage",
     "enabled": true,
     "useDataFromLastNMinutes": 5,
     "waitTimeAfterViolation": 1,
@@ -10,12 +10,10 @@
         "serverSelectionCriteria": {
             "selectServersBy": "AFFECTED_SERVERS",
             "affectedServers": {
-                "severSelectionScope": "SERVERS_MATCHING_PATTERN",
-                "patternMatcher": {
-                    "matchTo": "MATCH_REG_EX",
-                    "matchValue": "root*",
-                    "shouldNot": false
-                }
+                "severSelectionScope": "SPECIFIC_SERVERS",
+                "servers": [
+                    "MachineAgent-MaaC"
+                ]
             }
         }
     },

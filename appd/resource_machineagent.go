@@ -1,13 +1,12 @@
 package appd
 
 import (
-	"fmt"
-	"io/ioutil"
-	"math/rand"
 	"os/exec"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 // To be used later when testing registerting MA with a new application
@@ -59,10 +58,17 @@ func resourceMachineAgent() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"unique_host_id": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
 
+/**
+* Starts Machine Agent with params specified in main.tf
+**/
 func resourceMachineAgentCreate(d *schema.ResourceData, m interface{}) error {
 
 	host := m.(*Controller).Host
@@ -73,18 +79,19 @@ func resourceMachineAgentCreate(d *schema.ResourceData, m interface{}) error {
 	accountAccessKey := d.Get("account_access_key").(string)
 	simEnabled := d.Get("sim_enabled").(string)
 	sslEnabled := d.Get("ssl_enabled").(string)
+	uniqueHostId := d.Get("unique_host_id").(string)
 
-	startup_params := "java -Dappdynamics.controller.hostName=" + host + " -Dappdynamics.controller.port=" + port + " -Dappdynamics.agent.accountName=" + account + " -Dappdynamics.agent.accountAccessKey=" + accountAccessKey + " -Dappdynamics.sim.enabled=" + simEnabled + " -Dappdynamics.controller.ssl.enabled=" + sslEnabled
-	ioutil.WriteFile("outputParams.txt", []byte(startup_params+" -jar "+path+"machineagent.jar "), 777)
+	startup_params := "java -Dappdynamics.agent.uniqueHostId=" + uniqueHostId + " -Dappdynamics.controller.hostName=" + host + " -Dappdynamics.controller.port=" + port + " -Dappdynamics.agent.accountName=" + account + " -Dappdynamics.agent.accountAccessKey=" + accountAccessKey + " -Dappdynamics.sim.enabled=" + simEnabled + " -Dappdynamics.controller.ssl.enabled=" + sslEnabled
+	log.Info("Machine Agent startup command: " + startup_params + " -jar " + path + "machineagent.jar ")
 
 	cmd := exec.Command("bash", "-c", startup_params+" -jar "+path+"machineagent.jar &")
 	err := cmd.Start()
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err.Error())
 	}
-	var seededRand *rand.Rand = rand.New(
-		rand.NewSource(time.Now().UnixNano()))
-	d.SetId(string(seededRand.Int()))
+
+	u1 := uuid.Must(uuid.NewV4(), nil)
+	d.SetId(u1.String())
 	time.Sleep(15 * time.Second)
 	return nil
 }
@@ -93,6 +100,41 @@ func resourceMachineAgentCreate(d *schema.ResourceData, m interface{}) error {
 * Fetch all applications to get the appliction id of the one created above
 **/
 func resourceMachineAgentRead(d *schema.ResourceData, m interface{}) error {
+	// host := m.(*Controller).Host
+	// //host := controller.Host
+	// user := m.(*Controller).User
+	// password := m.(*Controller).Password
+	// port := m.(*Controller).Port
+	// account := m.(*Controller).Account
+	// auth := user + "@" + account
+	// application_name := d.Get("application_name").(string)
+
+	// ioutil.WriteFile("urlMA.txt", []byte("https://"+host+":"+string(port)+"/controller/rest/applications/"), 0644)
+
+	// url := "https://" + host + ":" + string(port) + "/controller/rest/applications/"
+
+	// req, err := http.NewRequest("GET", url, nil)
+	// req.SetBasicAuth(auth, password)
+
+	// res, err := http.DefaultClient.Do(req)
+	// body, err := ioutil.ReadAll(res.Body)
+
+	// if err != nil {
+	// 	fmt.Printf("Test case failed with error %s", err.Error())
+	// 	ioutil.WriteFile("readErrorMA.txt", []byte(fmt.Sprint(err)), 777)
+	// }
+
+	// defer res.Body.Close()
+
+	// var data Data
+	// xml.Unmarshal(body, &data)
+	// for i := 0; i < len(data.Applications); i++ {
+	// 	if data.Applications[i].Name == application_name {
+	// 		val := data.Applications[i].Id
+	// 		application_id = val
+	// 		ioutil.WriteFile("readOutputMA.txt", []byte(val), 777)
+	// 	}
+	// }
 	return nil
 }
 
@@ -105,7 +147,7 @@ func resourceMachineAgentDelete(d *schema.ResourceData, m interface{}) error {
 	_, err := exec.Command("sh", "-c", " kill `ps | grep machineagent`").Output()
 
 	if err != nil {
-		ioutil.WriteFile("deleteError.txt", []byte(fmt.Sprint(err.Error())), 777)
+		log.Error("Error stopping machine agent" + err.Error())
 	}
 	return nil
 }
