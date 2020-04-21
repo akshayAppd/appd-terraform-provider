@@ -80,8 +80,17 @@ func resourceMachineAgentCreate(d *schema.ResourceData, m interface{}) error {
 	simEnabled := d.Get("sim_enabled").(string)
 	sslEnabled := d.Get("ssl_enabled").(string)
 	uniqueHostId := d.Get("unique_host_id").(string)
+	application_name := d.Get("application_name").(string)
+	node_name := d.Get("node_name").(string)
+	tier_name := d.Get("tier_name").(string)
 
-	startup_params := "java -Dappdynamics.agent.uniqueHostId=" + uniqueHostId + " -Dappdynamics.controller.hostName=" + host + " -Dappdynamics.controller.port=" + port + " -Dappdynamics.agent.accountName=" + account + " -Dappdynamics.agent.accountAccessKey=" + accountAccessKey + " -Dappdynamics.sim.enabled=" + simEnabled + " -Dappdynamics.controller.ssl.enabled=" + sslEnabled
+	startup_params := ""
+
+	if simEnabled != "" {
+		startup_params = "java -Dappdynamics.agent.uniqueHostId=" + uniqueHostId + " -Dappdynamics.controller.hostName=" + host + " -Dappdynamics.controller.port=" + port + " -Dappdynamics.agent.accountName=" + account + " -Dappdynamics.agent.accountAccessKey=" + accountAccessKey + " -Dappdynamics.sim.enabled=" + simEnabled + " -Dappdynamics.controller.ssl.enabled=" + sslEnabled
+	} else {
+		startup_params = "java -Dappdynamics.agent.uniqueHostId=" + uniqueHostId + " -Dappdynamics.controller.hostName=" + host + " -Dappdynamics.controller.port=" + port + " -Dappdynamics.agent.accountName=" + account + " -Dappdynamics.agent.accountAccessKey=" + accountAccessKey + " -Dappdynamics.agent.applicationName" + application_name + " -Dappdynamics.agent.nodeName" + node_name + " -Dappdynamics.agent.tierName" + tier_name + " -Dappdynamics.controller.ssl.enabled=" + sslEnabled
+	}
 	log.Info("Machine Agent startup command: " + startup_params + " -jar " + path + "machineagent.jar ")
 
 	cmd := exec.Command("bash", "-c", startup_params+" -jar "+path+"machineagent.jar &")

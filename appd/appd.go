@@ -10,13 +10,14 @@ import (
 
 // Generates a http Request for GET/DELETE
 func generateRequest(c *Controller, application_id string, end_point string, resource_id string, method_type string) *http.Request {
+	protocol := c.Protocol
 	host := c.Host
 	user := c.User
 	password := c.Password
 	port := c.Port
 	account := c.Account
 	auth := user + "@" + account
-	url := "https://" + host + ":" + string(port) + "/controller/alerting/rest/v1/applications/" + application_id + "/" + end_point + "/" + resource_id
+	url := protocol + "://" + host + ":" + string(port) + "/controller/alerting/rest/v1/applications/" + application_id + "/" + end_point + "/" + resource_id
 	log.Debug("URL to read resource: " + url)
 
 	req, err := http.NewRequest(method_type, url, nil)
@@ -46,13 +47,14 @@ func GetResource(c *Controller, application_id string, end_point string, resourc
 }
 
 func CreateResource(c *Controller, application_id string, end_point string, file_path string) string {
+	protocol := c.Protocol
 	host := c.Host
 	user := c.User
 	password := c.Password
 	port := c.Port
 	account := c.Account
 	auth := user + "@" + account
-	url := "https://" + host + ":" + string(port) + "/controller/alerting/rest/v1/applications/" + application_id + "/" + end_point
+	url := protocol + "://" + host + ":" + string(port) + "/controller/alerting/rest/v1/applications/" + application_id + "/" + end_point
 
 	log.Debug("URL generated to create resource " + url)
 

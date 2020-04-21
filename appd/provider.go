@@ -27,6 +27,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"appd_healthrule":   resourceHealthRule(),
 			"appd_machineagent": resourceMachineAgent(),
+			"appd_javaagent":    resourceJavaAgent(),
 			"appd_policy":       resourcePolicy(),
 		},
 		Schema: map[string]*schema.Schema{

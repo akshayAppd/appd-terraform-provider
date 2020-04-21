@@ -1,38 +1,49 @@
 provider appd {
-	protocol = "https"
+	protocol = ""
 	host = ""
-	port = "443"
+	port = ""
 	user = ""
 	password = ""
 	account = ""
 }
 
+variable pid {
+	type = "string"
+}
+
+resource "appd_javaagent" "maac-javaagent" {
+	path = ""
+	jdk_path = ""
+	pid = var.pid
+}
 
 resource appd_machineagent "ma-maac" {
-	path = "<Path to MA>"
+	path = ""
 	account_access_key = ""
-	unique_host_id = "MachineAgent-MaaC"
-	sim_enabled = "true"
-	ssl_enabled = "true"
+	unique_host_id = ""
+	sim_enabled = ""
+	ssl_enabled = ""
 }
 
-resource "appd_healthrule" "hr-maac" {
-	json_file = "<JSON for HR>"
-	application_id = <application_id>
+resource "appd_healthrule" "BT-HRMaaC" {
+	json_file = ""
+	application_id = 
 }
 
-resource "appd_policy" "maac-policy" {
-	json_file = "<JSON for Policy>"
-	application_id = <application_id>
+resource "appd_policy" "BT-PolicyMaaC" {
+	json_file = ""
+	application_id = 
 
-	depends_on = [appd_healthrule.hr-maac]
+	depends_on = [appd_healthrule.BT-HRMaaC]
+
 }
-
 
 output "HR_details" {
-	value = "${appd_healthrule.hr-maac.*.data}"
+	value = "${appd_healthrule.BT-HRMaaC.*.data}"
 }
 
 output "Policy_details" {
-	value = "${appd_policy.maac-policy.*.data}"
+	value = "${appd_policy.BT-PolicyMaaC.*.data}"
 }
+
+
